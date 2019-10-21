@@ -19,22 +19,41 @@ noun="(а|ев|ов|ие|ье|е|иями|ями|ами|еи|ии|и|ией|ей
 suprelative="(ейш|ейше)$"
 derivational="(ост|ость)$"
 
-if [[ "$word" =~ $perfective_gerund ]]; then
+if [[ "$RV" =~ $perfective_gerund ]]; then
 	step_1=$(echo $word | sed -r "s/$perfective_gerund_replacer//")
-elif [[ "$word" =~ $reflexive ]]; then
+elif [[ "$RV" =~ $reflexive ]]; then
 	step_1=$(echo $word | sed -r "s/$reflexive//")
 #adjectival is defined as adjective | (participle + adjective)
-elif [[ "$word" =~ $adjective ]]; then
+elif [[ "$RV" =~ $adjective ]]; then
 	step_1=$(echo $word | sed -r "s/$adjective//")
-	if [[ "$word" =~ $participle ]]; then
+	if [[ "$step_1" =~ $participle ]]; then
 		step_1=$(echo $step_1 | sed -r "s/$participle_replacer//")
 	fi;
-elif [[ "$word" =~ $verb ]]; then	
+elif [[ "$RV" =~ $verb ]]; then	
 	step_1=$(echo $word | sed -r "s/$verb_replacer//")
-elif [[ "$word" =~ $noun ]]; then
+elif [[ "$RV" =~ $noun ]]; then
 	step_1=$(echo $word | sed -r "s/$noun//")
 else
 	step_1=$word
 fi;
 
-echo $step_1
+# echo $step_1
+
+step_2=$(echo $step_1 | sed -r "s/и$//")
+
+# echo $step_2
+
+if [[ "$R2" =~ $derivational ]]; then
+	step_3=$(echo $step_2 | sed -r "s/$derivational//")
+else
+	step_3=$step_2
+fi;
+# echo $step_3
+
+if [[ "$step_3" =~ ь$ ]]; then
+	step_4=$(echo $step_3 | sed -r "s/ь$//")
+else
+	step_4=$(echo $step_3 | sed -r "s/$suprelative//" | sed -r "s/нн$//" )
+fi;
+
+echo $step_4
